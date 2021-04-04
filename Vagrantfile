@@ -2,7 +2,7 @@
 # vi: set ft=ruby : 
 
 #cluster configuration
-CLUSTER_SIZE = 3
+CLUSTER_SIZE = 2
 START_CLUSTER_ID = 1
 FROM_IP = "192.168.100.101"
 ALL_NODES_IN_CLUSTER = ["192.168.100.101","192.168.100.102","192.168.100.103"]
@@ -26,13 +26,9 @@ end
 def provision_node(hostaddr, node_addresses)
     setup = <<-SCRIPT
 sudo apt-get  -q -y update
-sudo apt-get  -q -y install python-software-properties vim curl wget tmux socat
-sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-sudo add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu precise main'
+sudo apt-get  -q -y install python vim curl wget tmux socat mariadb-client mariadb-server
 
 sudo apt-get  -q -y update
-echo mariadb-galera-server-10.0 mysql-server/root_password password root | debconf-set-selections
-echo mariadb-galera-server-10.0 mysql-server/root_password_again password root | debconf-set-selections
 
 LC_ALL=en_US.utf8 DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::='--force-confnew' -qqy install mariadb-galera-server galera mariadb-client
 
@@ -104,7 +100,7 @@ expire_logs_days    = 10
 max_binlog_size         = 100M
 default_storage_engine  = InnoDB
 #innodb_log_file_size   = 50M
-innodb_buffer_pool_size = 2G
+innodb_buffer_pool_size = 1G
 innodb_log_buffer_size  = 8M
 innodb_file_per_table   = 1
 innodb_open_files   = 1000
@@ -192,7 +188,7 @@ Vagrant.configure("2") do |config|
     config.ssh.password = "vagrant"
     config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
     config.vm.provider "virtualbox" do |v|
-      v.memory = 4096
+      v.memory = 1111
       v.cpus = 1
     end
     if Vagrant.has_plugin?("vagrant-cachier")
